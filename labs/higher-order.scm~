@@ -1,0 +1,11 @@
+(define (sum term a next b)
+	(define (sum-accum a accum)
+		(if (> a b)
+			accum
+			(sum-accum (next a) (+ accum (term a)))))
+	(sum-accum a 0))
+
+(define (integral func a b)
+	(define dx 0,0001)
+	(define (add-dx x) (+ x dx))
+	(* (sum func (+ a (/ dx 2))) dx))

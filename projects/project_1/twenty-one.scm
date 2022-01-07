@@ -1,0 +1,105 @@
+#lang scheme
+
+(require berkeley)
+
+(define (twenty-one strategy)
+  (define (play-dealer customer-hand dealer-hand-so-far rest-of-deck)
+    (cond ((> (best-total dealer-hand-so-far) 21) 1)
+	  ((< (best-total dealer-hand-so-far) 17)
+	   (play-dealer customer-hand
+			(se dealer-hand-so-far (first rest-of-deck))
+			(bf rest-of-deck)))
+	  ((< (best-total customer-hand) (best-total dealer-hand-so-far)) -1)
+	  ((= (best-total customer-hand) (best-total dealer-hand-so-far)) 0)
+	  (else 1)))
+
+  (define (play-customer customer-hand-so-far dealer-up-card rest-of-deck)
+    (cond ((> (best-total customer-hand-so-far) 21) -1)
+	  ((strategy customer-hand-so-far dealer-up-card)
+	   (play-customer (se customer-hand-so-far (first rest-of-deck))
+			  dealer-up-card
+			  (bf rest-of-deck)))
+	  (else
+	   (play-dealer customer-hand-so-far
+			(se dealer-up-card (first rest-of-deck))
+			(bf rest-of-deck)))))
+
+  (let ((deck (make-deck)))
+    (play-customer (se (first deck) (first (bf deck)))
+		   (first (bf (bf deck)))
+		   (bf (bf (bf deck))))) )
+
+(define (make-ordered-deck)
+  (define (make-suit s)
+    (every (lambda (rank) (word rank s)) '(A 2 3 4 5 6 7 8 9 10 J Q K)) )
+  (se (make-suit 'H) (make-suit 'S) (make-suit 'D) (make-suit 'C)) )
+
+(define (make-deck)
+  (define (shuffle deck size)
+    (define (move-card in out which)
+      (if (= which 0)
+	  (se (first in) (shuffle (se (bf in) out) (- size 1)))
+	  (move-card (bf in) (se (first in) out) (- which 1)) ))
+    (if (= size 0)
+	deck
+    	(move-card deck '() (random size)) ))
+  (shuffle (make-ordered-deck) 52) )
+
+(define (best-total hand)
+	(define (get-value card)
+		(cond ((member? (first card) '(J Q K)) 10) 
+			  ((equal? (first card) 'A) 11)
+			  (else (butlast card))))
+			  
+	(define (check-busting total aces)
+		(if (and (> total 21) (> aces 0))
+			(check-busting (- total 10) (- aces 1))
+			total))
+			  
+	(check-busting (accumulate + (every get-value hand))
+				   (count (keep (lambda (card) (equal? (first card) 'A) ) 									hand))))
+
+(define (stop-at-17 customer-hand face-up-card)
+	(< (best-total customer-hand) 17))
+
+(define (play-n strategy n)
+	(define (plays games-won still-games)
+		(if (< still-games 1)
+			games-won
+			(plays (+ games-won (twenty-one strategy)) 
+				   (- still-games 1))))
+	(plays 0 n)			   
+	)
+
+(define (dealer-sensitive customer-hand face-up-card)
+	(or (and (member? (bl face-up-card) '(7 8 9 10 J Q K))
+			 (< (best-total customer-hand) 17))
+		(and (member? (bl face-up-card) '(2 3 4 5 6))
+			 (< (best-total customer-hand) 12))))
+
+(define (stop-at n)
+	(lambda (customer-hand face-up-card) 
+		(< (best-total customer-hand) n)))
+
+(define (suit-strategy suit customer-hand strategy1 strategy2)
+  (if (member? suit (every last customer-hand))
+      (stop-at 19)
+      (stop-at 17)))
+
+(define (valentine customer-hand face-up-card)
+  (suit-strategy 'h customer-hand (stop-at 17) (stop-at 19)))
+
+(define (majority strategy1 strategy2 strategy3)
+  (lambda (hand face-up)
+    (let ((stra1 (strategy1 hand face-up))
+          (stra2 (strategy2 hand face-up))
+          (stra3 (strategy3 hand face-up)))
+      (or (and stra1 stra2) (and stra1 stra3) (and stra2 stra3)))))
+
+
+(define (reckless some-strategy)
+  (lambda (customer-hand face-up-card)
+    (some-strategy (butlast customer-hand) face-up-card)))
+
+
+;                                      32

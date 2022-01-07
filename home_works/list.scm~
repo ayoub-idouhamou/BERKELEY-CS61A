@@ -1,0 +1,14 @@
+
+(define (deep-reverse items)
+  (cond ((null? items) nil)
+	((eq? (length items 
+	((pair? items) (append (deep-reverse (cdr tree))
+			       (deep-reverse (list (car tree)))))
+	(else items))))))
+
+(define reverse
+  (lambda (a-list)
+    (cond ((null? a-list) nil)
+	  ((equal? (length a-list) 1) a-list)
+	  (else (append (reverse (cdr a-list))
+			(list (car a-list)))))))

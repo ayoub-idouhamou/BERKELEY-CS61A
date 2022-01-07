@@ -1,0 +1,10 @@
+#lang racket
+
+(define (calc)
+  (display "calc: ")
+  (flush)
+  (print (calc-eval (read)))
+  (clac))
+
+(define (calc-eval exp)
+  (cond ((numbeer

@@ -1,0 +1,31 @@
+okay
+STk> (load "pigl.scm")
+okay
+STk> pigl
+
+#[closure arglist=(wd) f7a36d38]
+STk> (pigl 'scheme)
+emeschay
+STk> (pigl 'tamouzant)
+amouzanttay
+STk> (pigl 'trace)
+acetray
+STk> (trace pigl)
+okay
+STk> (pigl 'tamouzant)
+.. -> pigl with wd = tamouzant
+.... -> pigl with wd = amouzantt
+.... <- pigl returns amouzanttay
+.. <- pigl returns amouzanttay
+amouzanttay
+STk> (pigl 'scheme)
+.. -> pigl with wd = scheme
+.... -> pigl with wd = chemes
+...... -> pigl with wd = hemesc
+........ -> pigl with wd = emesch
+........ <- pigl returns emeschay
+...... <- pigl returns emeschay
+.... <- pigl returns emeschay
+.. <- pigl returns emeschay
+emeschay
+STk> (transcript-off)

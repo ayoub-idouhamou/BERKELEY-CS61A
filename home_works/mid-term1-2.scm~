@@ -1,0 +1,5 @@
+(define every-nt
+  (lambda (n sequence)
+    (define (iterate counter rest result)
+      (cond ((null? rest) result)
+	    ((equal? (mod 

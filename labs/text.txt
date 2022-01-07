@@ -1,0 +1,5 @@
+When a program asks to read or print text, without specifying a particular source or destination, its input
+comes from something called the standard input ; its output goes to the standard output. Ordinarily, the
+standard input is the keyboard and the standard output is the screen. But you can redirect them using the
+characters < and > in shell commands. In this case, we are asking the shell to connect tr’s standard input
+to the file named summary, and to connect its standard output to a new file named nopunct.
