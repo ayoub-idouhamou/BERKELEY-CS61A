@@ -52,7 +52,32 @@
                            (/ (num i) (+ (denom i) accum)))))))
     (iterate k 0)))
 
-;; In order to compute the fixed point of a function more quickly (in fewer steps),
-;; we make a transformation by averaging the succissive approximations,
+;; In order to compute a fixed point of a function more quickly (in fewer steps),
+;; we make a transformation to the function by averaging succissive approximations,
 ;; a technique called average damping, that eliminate oscillations about the solution
-;; that may occur 
+;; that may occur
+
+;;Exercise 1.38: An approximation of e (the base of natural logarithms)
+;;using a continued fraction expansion of e - 1 discovered by the mathematician Euler
+;;I admit I didn't come up with the procedure representing the pattern of sequence values of Di
+;; in the expansion, I am not that impressive in mathematics
+(define approximate-e
+  (lambda (k)
+    (+ (iter-continued-fraction
+          (lambda (i) 1.0)
+          (lambda (i) (if (= (remainder i 3) 2) (/ (+ i 1) 1.5) 1))
+          k)
+       2)))
+                                      
+;; Exercise 1.39: A procedure representing an approximation to the tangent function
+;; of some given angle x, using k-term continued fraction (Lambert's expansion formula)
+(define (cont-frac-tan x k)
+  (/ (iter-continued-fraction (lambda (i) (- (* x x)))
+                              (lambda (i) (- (* 2 i) 1))
+                              k)
+     (- x)))
+
+
+   
+ 
+                                                          
