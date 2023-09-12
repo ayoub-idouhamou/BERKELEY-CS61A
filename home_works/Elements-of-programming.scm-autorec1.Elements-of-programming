@@ -114,10 +114,10 @@
 ;;We write then the comlplexity in time and space is O(log)
 
 ;;EX 1.16
-;;Exponentiation using successive multiplying
+;;Exponentiation through successive multiplying
 ;;recursive process
-(define (expt b n)
-  (if (= n 0) 1 (* b (expt b (- n 1)))))
+(define (expt-recur b n)
+  (if (= n 0) 1 (* b (expt-recur b (- n 1)))))
 ;;iterative process
 (define expt-iter 
   (lambda (b n)
@@ -135,40 +135,14 @@
 ;;If n is even we square our product and halve n, otherwise multiply by b and decriment n
 ;;keep doing this until we get to the base case n == 0
 ;;recusive process
-(define (expt-fast b n) 
+(define (expt-fast b n)
   (cond ((= n 0) 1)
         ((even? n) (square (expt-fast b (/ n 2))))
         (else (* b (expt-fast b (- n 1))))))
 ;;iterative process
-(define expt-fast-iter
-  (lambda (b n)
-    (define (iter counter base product)
-      (cond ((= counter 0) product)
-            ((even? counter) (iter (/ counter 2) (square base) product))
-            (else (iter (- counter 1) base (* base product)))))
-    (iter n b 1)))
-    
-;;EX 1.17 We saw in the previous exercise, that one can implement the notion of exponentiation
-;;by performing successive mutiplications. In a similar way, multiplying could be implemented as a series of additions,
-;;(supposing that we can only add in our language).One way to do this is as follows:
-(define (multiply a b)
-  (if (= a 0) 0 (+ b (multiply (- a 1) b))))
-;;This procedure generates a process that grows linearly in time with the size of a.
-;;Now let us write one that has a logarithmic time complexity, using the halve and double procedures
-(define (fast-multiply a b)
-  (cond ((zero? a) 0)
-        ((even? a) (double (fast-multiply (halve a) b)))
-        (else (+ b (fast-multiply (- a 1) b)))))
-(define double (lambda (x) (* x 2)))
-(define halve (lambda (x) (/ x 2)))
 
-;;EX 1.18 Now let us write an itertive counterpart procedure for fast-multiply answered in exercise 1.17
-(define (fast-iter-multiply a b)
-  (define (iterate counter number result)
-    (cond ((= counter 0) result)
-          ((even? counter) (iterate (/ counter 2) (* 2 number) result))
-          (else (iterate (- counter 1) number (+ result number)))))
-  (iterate a b 0))
+
+
              
 
 
