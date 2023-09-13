@@ -1,26 +1,54 @@
 #lang scheme
-
-(define (sum term a next b)
+;Procedure implelemeting the general notion of summing results for applying
+;;a function over a given interval
+(define (sum func a next b)
   (if (> a b)
       0
-      (+ (term a) (sum term (next a) next b))))
+      (+ (func a) (sum func (next a) next b))))
+;;examles of use cases
+(define sum-squares
+  (lambda (a b) (sum (lambda (x) (* x x))
+                     a
+                     (lambda (x) (+ x 1))
+                     b)))
+(define sum-integers
+  (lambda (a b) (sum (lambda (x) x)
+                     a
+                     (lambda (x) (+ x 1))
+                     b)))
 
+;EX 1.29 Numerical integration
+;When it comes to calculating numerical integrals, Simpson's rule is considered a
+;more accurate method, compared to some other counterparts
+;;let us begin with a less accurate one                 
 (define integral
   (lambda (func a b dx)
-    (* dx (sum func
-               (+ a (/ dx 2))
-               (lambda (x) (+ x dx))
-               b))))
+    (* (sum func
+            (+ a (/ dx 2.0))
+            (lambda (x) (+ x dx))
+            b) dx)))
 
 (define (simpson-integral func a b n)
   (define h (/ (- b a) n))
   (define yk (lambda (k) (func (+ a (* k h)))))
   (define simpson-term
-    (lambda (k) (* (if (even? k) 2 4) (yk k)))) 
-  (* (/ h 3)
+    (lambda (k) (* (if (even? k) 2.0 4.0) (yk k)))) 
+  (* (/ h 3.0)
      (+ (yk 0)
         (sum simpson-term 1 (lambda (k) (+ k 1)) (- n 1))
         (yk n))))
+;;Computing the inegral of the function f(x) = x*x*x
+;;using the simpson Rule gives a more accurate result .25
+;;I have also noticed that after only 4 iteration, the integral
+;;converges to our desired result meaning using a value n=4
+
+;EX 1.30 An iterative version of the procedure
+(define (sum func a next b)
+  (define (iter counter result)
+    (if (> counter b)
+        result
+        (iter (next counter) (+ (func counter) result))))
+  (iter a 0))
 
 (define (product term a next b)
   (define (iter elem result)
